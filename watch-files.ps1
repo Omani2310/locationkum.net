@@ -1,33 +1,33 @@
-# سكريبت مراقبة الملفات للربط التلقائي
-# يراقب التغييرات في المشروع ويقوم بالربط التلقائي
+# File Monitoring Script for Auto Sync
+# Monitors project changes and runs automatic sync
 
 param(
     [int]$DelaySeconds = 30
 )
 
-Write-Host "👀 بدء مراقبة الملفات للربط التلقائي..." -ForegroundColor Green
-Write-Host "⏱️ فحص كل $DelaySeconds ثانية" -ForegroundColor Cyan
-Write-Host "🛑 اضغط Ctrl+C لإيقاف المراقبة" -ForegroundColor Red
+Write-Host "Starting file monitoring for automatic sync..." -ForegroundColor Green
+Write-Host "Checking every $DelaySeconds seconds" -ForegroundColor Cyan
+Write-Host "Press Ctrl+C to stop monitoring" -ForegroundColor Red
 Write-Host ""
 
 try {
     while ($true) {
-        # التحقق من وجود تغييرات
+        # Check for changes
         $status = git status --porcelain
         
         if (-not [string]::IsNullOrEmpty($status)) {
-            Write-Host "🔄 تم اكتشاف تغييرات جديدة..." -ForegroundColor Yellow
+            Write-Host "New changes detected..." -ForegroundColor Yellow
             
-            # تشغيل سكريبت الربط التلقائي
+            # Run auto-commit script
             & "$PSScriptRoot\auto-commit.ps1"
             
-            Write-Host "⏳ انتظار $DelaySeconds ثانية..." -ForegroundColor Gray
+            Write-Host "Waiting $DelaySeconds seconds..." -ForegroundColor Gray
         } else {
-            Write-Host "✅ لا توجد تغييرات جديدة - $(Get-Date -Format 'HH:mm:ss')" -ForegroundColor Gray
+            Write-Host "No new changes - $(Get-Date -Format 'HH:mm:ss')" -ForegroundColor Gray
         }
         
         Start-Sleep -Seconds $DelaySeconds
     }
 } catch {
-    Write-Host "❌ تم إيقاف المراقبة" -ForegroundColor Red
+    Write-Host "Monitoring stopped" -ForegroundColor Red
 } 
